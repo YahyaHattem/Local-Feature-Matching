@@ -54,14 +54,16 @@ def estimate_fundamental_matrix(Points_a, Points_b):
     c_v_prime = np.mean(v_prime)
 
     offset_matrix = np.array([[1, 0, -c_u], [0, 1, -c_v], [0, 0, 1]])
-    offset_matrix_prime = np.array([[1, 0, -c_u_prime], [0, 1, -c_v_prime], [0, 0, 1]])
+    offset_matrix_prime = np.array(
+        [[1, 0, -c_u_prime], [0, 1, -c_v_prime], [0, 0, 1]])
 
     # Calculate scale matrices for images a and b
     s = 1 / np.std([[u - c_u], [v - c_v]])
     s_prime = 1 / np.std([[u_prime - c_u_prime], [v_prime - c_v_prime]])
 
     scale_matrix = np.array([[s, 0, 0], [0, s, 0], [0, 0, 1]])
-    scale_matrix_prime = np.array([[s_prime, 0, 0], [0, s_prime, 0], [0, 0, 1]])
+    scale_matrix_prime = np.array(
+        [[s_prime, 0, 0], [0, s_prime, 0], [0, 0, 1]])
 
     T_a = scale_matrix @ offset_matrix
     T_b = scale_matrix_prime @ offset_matrix_prime
@@ -141,7 +143,7 @@ def evaluate_correspondence(img_A, img_B, ground_truth_correspondence_file,
         x2_matches[i] = x2_est_scaled[int(matches[i, 1])]
         y2_matches[i] = y2_est_scaled[int(matches[i, 1])]
 
-    good_matches = np.zeros((matches.shape[0]), dtype=np.bool)
+    good_matches = np.zeros((matches.shape[0]), dtype=np.bool_)
 
     # Loads `ground truth' positions x1, y1, x2, y2
     file_contents = scio.loadmat(ground_truth_correspondence_file)
@@ -188,18 +190,22 @@ def evaluate_correspondence(img_A, img_B, ground_truth_correspondence_file,
             offset_y1 *= img_B.shape[0] / img_A.shape[0]
             offset_x2 = x2_matches[i] - x2[closest_ground_truth]
             offset_y2 = y2_matches[i] - y2[closest_ground_truth]
-            offset_dist = np.sqrt(np.power(offset_x1 - offset_x2, 2) + np.power(offset_y1 - offset_y2, 2))
+            offset_dist = np.sqrt(
+                np.power(offset_x1 - offset_x2, 2) + np.power(offset_y1 - offset_y2, 2))
             if offset_dist < 70:
                 correct_matches += 1
                 good_matches[i] = True
         if i == 49:
-            print(f'Accuracy on 50 most confident: {int(100 * correct_matches / 50)}%')
+            print(
+                f'Accuracy on 50 most confident: {int(100 * correct_matches / 50)}%')
             top50 = correct_matches
         if i == 99:
-            print(f'Accuracy on 100 most confident: {int(100 * correct_matches / 100)}%')
+            print(
+                f'Accuracy on 100 most confident: {int(100 * correct_matches / 100)}%')
             top100 = correct_matches
 
-    print(f'Accuracy on all matches: {int(100 * correct_matches / len(matches))}%')
+    print(
+        f'Accuracy on all matches: {int(100 * correct_matches / len(matches))}%')
 
     if vis > 0:
         print("Vizualizing...")
